@@ -1,6 +1,8 @@
 <?php 
 include 'javaScript/funktions.php';
 include 'php/funktions1.php';
+$token = 'e5b373adcf'; // Mer att göra  (hämta från google)
+
 ?>
 <head>
 <!doctype html>
@@ -13,8 +15,9 @@ include 'php/funktions1.php';
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 <body>
-
-
+<div style=" position:absolute; left:0; top:0;">
+<a href="index.php"><img src="img/aktivitetsbanken_android_icon.png" alt="" width="100"/></a>
+</div>
 <table class="center" width="300px">
     <tr>
         <td>
@@ -22,7 +25,8 @@ include 'php/funktions1.php';
             <table>
             	<tr>
                 <td></td>
-                <td><input type="search" id="searchBar" name="sokfras" value="<?php if (isset($_GET["sokfras"])) { echo $_GET["sokfras"]; } else { echo "sök ord";} ?> "  onClick="searchfor()"></td>
+                <td><input type="search" id="searchBar" name="sokfras" value="<?php if (isset($_GET["sokfras"])) { echo $_GET["sokfras"]; } else { echo "sök ord";} ?> "  
+				<?php if (!isset($_GET["sokfras"])) {echo 'onClick="searchfor()"';} ?>></td>
                 <td><input type="submit"></td>
                 </tr>
                 <tr>
@@ -57,92 +61,95 @@ include 'php/funktions1.php';
         </td>
     </tr>
 </table>
+<?php 
+if (isset($_GET["sokfras"])){ ?>
+<div class="center" style="width:300px;">
+    <form method="get">
+        <input type="hidden" name="sokfras" value="<?php  echo $_GET['sokfras']; ?>">
+        <input type="hidden" name="age_1" value="<?php  echo $_GET['age_1']; ?>">
+        <input type="hidden" name="age_2" value="<?php  echo $_GET['age_2']; ?>">
+        <input type="hidden" name="page" value="<?php  if (isset($page) or isset($_GET['pageNav'])) {
+			if ($_GET['pageNav'] == "next")
+	{
+		
+		$page = $_GET['page'];
+		$page ++;
+	}
+			if ($_GET['pageNav'] == "pre")
+	{
+		
+		$page = $_GET['page'];
+		$page --;
+	}
+			echo $page;} else {echo 2;} ?>">
+        <input type="submit" value="pre" name="pageNav" title="pre">
+        <input type="submit" value="next" name="pageNav" title="next">
+    </form>
+</div>
 
 <?php
-//echo $ost;
-$url ="http://devscout.mikaelsvensson.info:10081/api/v1/activities?text=".$_GET["sokfras"];
-$url2 ="http://devscout.mikaelsvensson.info:10081/api/v1/activities/18/rating";
-$url3 ="http://devscout.mikaelsvensson.info:10081/api/v1/favourites";
-$url4 ="http://devscout.mikaelsvensson.info:10081/api/v1/users/profile";
-$token = '07f2e0edb17cd1bba91be67ca2b7343428c973a7'; 
-//rait(5,$token,18);
-
-echo '<br>';
-// Initialize the cURL session with the request URL
-$session = curl_init($url); 
-	
-	// Set the HTTP request authentication headers
-	$headers = array(
-		'Authorization: Token token="'.$token.'"',
-		'Content-Type: application/json'
-	);
-	curl_setopt($session, CURLOPT_HTTPHEADER, $headers);
-	//curl_setopt($session, CURLOPT_URL, $url);
-	//curl_setopt($session, CURLOPT_POST, true);
-	//curl_setopt($session, CURLOPT_POSTFIELDS, $token);
-	curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
-	
-	//curl --output scoutapi.flat --header "Authorization: Token token=\"85df3deb58\"" http://devscout.mikaelsvensson.info:10081/api/v1/activities?age_1=8&age_2=9
-	
-	// Execute cURL on the session handle
-	$response = curl_exec($session);
-// Close the cURL session
-curl_close($session);
-
-echo '<br>';
-//print_r($response);//-------------------------TEST RAD-------------------------------------------------------
-echo '<br>';
-
-$results = json_decode($response);
-
-
-$my_array = $results;
-usort($my_array, 'custom_sort');
-function custom_sort($a, $b) {
-  // The < and > operators used on strings check whether a string is alphabetically greater or less than another value
-  if($a->id > $b->id) {
-    // A is greater than B
-    return 1;
-  } else if( $a < $b ) {
-    // A is less than B
-    return -1;
-  } else {
-    // A and B have the same value
-    return 0;
-  }
 }
 
-//print_r($my_array);
-rait(5,$token,18);
-
-$resultcount = count($results); // räknar antalet ynd
-		$sidcount = ($resultcount-1)/10; // -1 för att jag vill börga på 0 och inte 1 sedan delar det på 10 då det är antalt resultat per sida
-		$sidcount = ceil($sidcount); //avrundar upp (4.1 blir 5) för att alla resultat ska visas
+if (isset($_GET["sokfras"])){
+	$sok = trim ($_GET["sokfras"]);
+	$url ="activities?text=".$sok;
+	//$url2 ="http://devscout.mikaelsvensson.info:10081/api/v1/activities/18/rating";
+	//$url3 ="http://devscout.mikaelsvensson.info:10081/api/v1/favourites";
+	//$url4 ="http://devscout.mikaelsvensson.info:10081/api/v1/users/profile";
 	
-	
-	
-		//echo $sokOrd;
-		$x=0; // nollställer x till 0
-		foreach ($my_array as $post){//loppar results och lägger det temp i $post  
-			echo '<div id="'.$x.'"class="result center" >'; // startar en div med id $x vilket är antalet gånger som det loppas
-			echo "<h1> <a href='mer.php?id=".$post->id."'>".$post->name."</a></h1>"; // skriver ut aktivitetens namn med aktivitets idn som id
-			echo " Från ".$post->age_min; // skriver rekomenderad min older
-			echo " till ".$post->age_max."år"; // skriver rekomenderad max ålder
-			echo "<br/>";
-			echo $post->descr_introduction; // skriver ut en kort beskrevning av aktiviteten
-			$x++;  // lägger till 1 på $x för nästa ativitet
-			echo "<br/>";
-			echo "<br/>";
-			echo "<br/>";
-			print_r($post); // -------------------------------------------test rad----------------------------------------
-			echo "</div>";
-			
+	//echo '<br>';
+	// Initialize the cURL session with the request URL
+	if (isset($token)){
+		$response = getInfo($url,$token);
+	}else{
+		$response = getInfoNoTokens($url);
 	}
+	
+	//echo '<br>';
+	//print_r($response);//-------------------------TEST RAD-------------------------------------------------------
+	//echo '<br>';
 
 
+} else if ((isset($token))) {
+		$url = 'activities?my_favourites=true';
+    	$response = getInfo($url,$token);
+} else {
+	// visa 10 random	
+	$url = 'activities?random=10';
+	$response = getInfoNoTokens($url);
 	
-	
-	
-	
-	
-?></body>
+}
+
+$my_array = json_decode($response);
+printResult($my_array);
+
+if (isset($_GET["sokfras"])){
+?>
+<div class="center" style="width:300px;">
+    <form method="get">
+        <input type="hidden" name="sokfras" value="<?php  echo $_GET['sokfras']; ?>">
+        <input type="hidden" name="age_1" value="<?php  echo $_GET['age_1']; ?>">
+        <input type="hidden" name="age_2" value="<?php  echo $_GET['age_2']; ?>">
+        <input type="hidden" name="page" value="<?php  if (isset($page) or isset($_GET['pageNav'])) {
+			if ($_GET['pageNav'] == "next")
+	{
+		
+		$page = $_GET['page'];
+		$page ++;
+	}
+			if ($_GET['pageNav'] == "pre")
+	{
+		
+		$page = $_GET['page'];
+		$page --;
+	}
+			echo $page;} else {echo 2;} ?>">
+        <input type="submit" value="pre" name="pageNav" title="pre">
+        <input type="submit" value="next" name="pageNav" title="next">
+    </form>
+</div>
+<br>
+<?php
+}
+?>
+</body>

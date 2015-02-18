@@ -7,26 +7,31 @@
 	border: 0;
 	padding: 0px;
 	margin: 0px;
-	font:15px tahoma;
 }
-h1{
+/*h1{
 	font-size:24px;
-font-weight: bold;
-font-variant: initial;
-}
+	font-weight: bold;
+	font-variant: initial;
+}*/
 h2{
 font-weight: bold;
 font-variant: initial;
 font-size:20px;
 margin-top:2px;
 }
-#header h1 a{
+.bold_link a{
 	font-weight: bold;
 	font-variant: initial;
 	font-size:20px;
 	margin-top:2px;
-	color:rgba(0,0,0,1.00);
-	text-decoration: none;	
+	color:#A4181B;
+}
+.bold_link a:hover{
+	font-weight: bold;
+	font-variant: initial;
+	font-size:20px;
+	margin-top:2px;
+	color:rgba(43,50,181,1.00);
 }
 #pageas{
 	display:block;
@@ -35,16 +40,12 @@ margin-top:2px;
 #pageas input{
 	width:20px;
 }
-#header h1 a:hover{
-	font-weight: bold;
-	font-variant: initial;
-	font-size:20px;
-	margin-top:2px;
-	text-decoration: underline;
-	color:rgba(16,47,0,1.00));
-}
 img, object, embed, video {
 	max-width: 100%;
+}
+#more_info{
+	text-align:left;
+	
 }
 
 /* IE 6 does not support max-width so default to width 100% */
